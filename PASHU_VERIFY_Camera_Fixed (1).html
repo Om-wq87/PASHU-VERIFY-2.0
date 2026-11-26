@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PASHU VERIFY – Muzzle Match Demo</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f2f7f3;color:#173629}header{background:#145b3b;color:white;padding:22px max(18px,calc((100% - 1100px)/2));display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.brand{font-size:22px;font-weight:800}.brand small{display:block;font-size:12px;font-weight:400;color:#d5ebdc;margin-top:5px}.tag{border:1px solid #ffffff66;border-radius:20px;padding:8px 12px;font-size:12px}main{max-width:1100px;margin:22px auto;padding:0 16px}.notice{background:#fff8e7;border:1px solid #f0d99c;color:#71551c;border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.5;margin-bottom:18px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{background:white;border:1px solid #dfebe2;border-radius:14px;padding:18px;box-shadow:0 4px 14px #183d2810}.card h2{font-size:18px;margin:0 0 8px}.muted{font-size:13px;color:#6c7f74;margin:0 0 14px}label{display:block;font-size:13px;font-weight:bold;margin:11px 0 5px}input,select{width:100%;padding:10px;border:1px solid #d4e1d8;border-radius:8px;font-size:14px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.camera{background:#10271c;border-radius:10px;min-height:190px;display:grid;place-items:center;color:#d8e8dd;overflow:hidden}.camera video{width:100%;max-height:270px;object-fit:contain;display:none}.placeholder{text-align:center;padding:25px;font-size:13px}.placeholder b{font-size:34px;display:block;margin-bottom:7px}.buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btn{border:0;border-radius:8px;padding:10px 13px;font-weight:bold;cursor:pointer}.green{background:#176b45;color:white}.pale{background:#e8f3eb;color:#176b45}.red{background:#fff0f0;color:#b83232}.status{font-size:13px;margin-top:10px;min-height:18px;color:#176b45;line-height:1.45}.result{display:none;margin-top:14px;padding:14px;background:#eef8f0;border:1px solid #cfe5d5;border-radius:10px}.result h3{margin:0 0 8px}.result p{margin:5px 0;font-size:14px}.result img{width:90px;height:90px;object-fit:cover;border-radius:8px;float:right}.stats{display:flex;gap:10px;margin-bottom:16px}.stat{background:white;border:1px solid #dfebe2;border-radius:10px;padding:13px 16px;flex:1}.stat span{font-size:12px;color:#6c7f74}.stat strong{display:block;font-size:24px;color:#176b45;margin-top:4px}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;border-bottom:1px solid #e5eee8;padding:10px 7px}th{color:#6c7f74}.scroll{overflow:auto}footer{text-align:center;color:#718078;font-size:12px;padding:22px}@media(max-width:750px){.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}.stats{flex-wrap:wrap}}
+</style></head>
+<body>
+<header><div class="brand">🐄 PASHU VERIFY<small>Smart Cattle Identification – Muzzle Matching Prototype</small></div><div class="tag">ACADEMIC DEMO</div></header>
+<main>
+<div class="notice"><b>Prototype note:</b> This version stores each registered muzzle photo and compares a new scan with saved photos to suggest a possible match. It is a visual-similarity demo, not a trained or validated biometric AI model. For reliable identification across different angles and lighting, a cattle-muzzle image dataset and a trained recognition model are required.</div>
+<div class="stats"><div class="stat"><span>Registered cattle</span><strong id="total">0</strong></div><div class="stat"><span>Saved muzzle photos</span><strong id="photos">0</strong></div></div>
+<div class="grid">
+<section class="card">
+<h2>1. Register a cattle</h2><p class="muted">Capture a clear muzzle photo and save its details first.</p>
+<div class="camera"><div class="placeholder" id="regPlaceholder"><b>📷</b>Camera preview will appear here</div><video id="regVideo" autoplay playsinline></video></div>
+<div class="buttons"><button class="btn green" id="regStart">Start camera</button><button class="btn pale" id="regCapture" disabled>Capture muzzle</button><button class="btn red" id="regStop" disabled>Stop</button></div>
+<img id="regPreview" style="display:none;max-width:110px;max-height:100px;margin-top:10px;border-radius:8px" alt="Registered muzzle photo">
+<form id="regForm">
+<div class="row"><div><label>Owner name *</label><input id="owner" required></div><div><label>Phone (optional)</label><input id="phone"></div></div>
+<div class="row"><div><label>Breed *</label><select id="breed" required><option value="">Select breed</option><option>Gir</option><option>Sahiwal</option><option>Jersey</option><option>Holstein Friesian</option><option>Red Sindhi</option><option>Murrah Buffalo</option><option>Other</option></select></div><div><label>Animal type</label><select id="type"><option>Cow</option><option>Buffalo</option><option>Other</option></select></div></div>
+<div class="row"><div><label>Age (years)</label><input id="age" type="number" min="0" max="40"></div><div><label>Last vaccination</label><input id="vaccine" type="date"></div></div>
+<label>Notes</label><input id="notes" placeholder="Optional health notes">
+<div class="buttons"><button class="btn green" type="submit">Save cattle profile</button><button class="btn pale" type="reset">Clear details</button></div></form><div class="status" id="regStatus"></div>
+</section>
+<section class="card">
+<h2>2. Scan and find existing cattle</h2><p class="muted">Capture the muzzle again. The app compares it with saved registration photos.</p>
+<div class="camera"><div class="placeholder" id="scanPlaceholder"><b>🔎</b>Scanner camera preview will appear here</div><video id="scanVideo" autoplay playsinline></video></div>
+<div class="buttons"><button class="btn green" id="scanStart">Start scanner</button><button class="btn pale" id="scanCapture" disabled>Scan muzzle</button><button class="btn red" id="scanStop" disabled>Stop</button></div>
+<div class="status" id="scanStatus"></div><div class="result" id="matchResult"></div>
+</section>
+</div>
+<section class="card" style="margin-top:16px"><h2>Registered cattle database</h2><p class="muted">Records are stored in this browser on this device.</p><div class="scroll"><table><thead><tr><th>Cattle ID</th><th>Owner</th><th>Breed</th><th>Vaccination</th><th>Action</th></tr></thead><tbody id="list"></tbody></table></div><div class="status" id="empty">No records saved yet.</div></section>
+</main><footer>PASHU VERIFY • Student project prototype • Keep a backup of your records.</footer>
+<canvas id="work" width="16" height="16" hidden></canvas>
+<script>
+const $=id=>document.getElementById(id);let db=JSON.parse(localStorage.getItem('pvMuzzleDB')||'[]');let regStream=null,scanStream=null,regPhoto='';
+function saveDB(){try{localStorage.setItem('pvMuzzleDB',JSON.stringify(db));render();}catch(e){alert('Browser storage is full. Try a smaller photo or fewer records.');}}
+function render(){$('total').textContent=db.length;$('photos').textContent=db.filter(x=>x.photo).length;$('list').innerHTML=db.map(x=>`<tr><td><b>${esc(x.id)}</b></td><td>${esc(x.owner)}</td><td>${esc(x.breed)}</td><td>${esc(x.vaccine||'Not added')}</td><td><button class="btn red" onclick="removeRecord('${x.id}')">Delete</button></td></tr>`).join('');$('empty').style.display=db.length?'none':'block';}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+async function start(videoId,which){
+ const status=$(which==='reg'?'regStatus':'scanStatus');
+ if(!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+   status.textContent='Camera needs a secure page. Do not open this HTML by double-clicking. Open it through VS Code Live Server at http://localhost, then allow camera permission.';
+   return;
+ }
+ try{
+   let s;
+   try{s=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});}
+   catch(firstError){s=await navigator.mediaDevices.getUserMedia({video:true,audio:false});}
+   if(which==='reg')regStream=s;else scanStream=s;
+   const v=$(videoId);v.srcObject=s;v.style.display='block';
+   await v.play();
+   $(which==='reg'?'regPlaceholder':'scanPlaceholder').style.display='none';
+   $(which==='reg'?'regCapture':'scanCapture').disabled=false;
+   $(which==='reg'?'regStop':'scanStop').disabled=false;
+   status.textContent='Camera ready. Keep the muzzle centered and well lit.';
+ }catch(e){
+   let msg='Camera could not start. ';
+   if(e.name==='NotAllowedError'||e.name==='PermissionDeniedError')msg+='Allow camera permission for localhost in your browser settings.';
+   else if(e.name==='NotFoundError'||e.name==='DevicesNotFoundError')msg+='No camera was found on this device.';
+   else if(e.name==='NotReadableError'||e.name==='TrackStartError')msg+='Camera may be in use by another app. Close other camera apps and retry.';
+   else msg+='Check camera permission and reconnect/retry.';
+   status.textContent=msg+' ('+(e.name||'Camera error')+')';
+ }
+}
+function stop(which){let s=which==='reg'?regStream:scanStream;if(s)s.getTracks().forEach(t=>t.stop());if(which==='reg')regStream=null;else scanStream=null;const v=$(which==='reg'?'regVideo':'scanVideo');v.srcObject=null;v.style.display='none';$(which==='reg'?'regPlaceholder':'scanPlaceholder').style.display='block';$(which==='reg'?'regCapture':'scanCapture').disabled=true;$(which==='reg'?'regStop':'scanStop').disabled=true;}
+function snap(videoId){const v=$(videoId);if(!v.videoWidth)throw Error('Camera is still loading. Try again.');const c=document.createElement('canvas');const max=480,scale=Math.min(1,max/v.videoWidth);c.width=Math.round(v.videoWidth*scale);c.height=Math.round(v.videoHeight*scale);c.getContext('2d').drawImage(v,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.65);}
+function feature(dataUrl){return new Promise(resolve=>{const img=new Image();img.onload=()=>{const c=$('work'),ctx=c.getContext('2d',{willReadFrequently:true});ctx.clearRect(0,0,16,16);ctx.drawImage(img,0,0,16,16);const d=ctx.getImageData(0,0,16,16).data,a=[];let mean=0;for(let i=0;i<d.length;i+=4){let g=(.299*d[i]+.587*d[i+1]+.114*d[i+2])/255;a.push(g);mean+=g;}mean/=a.length;let norm=a.map(v=>v-mean),mag=Math.sqrt(norm.reduce((s,v)=>s+v*v,0))||1;resolve(norm.map(v=>v/mag));};img.onerror=()=>resolve(null);img.src=dataUrl;});}
+function similarity(a,b){if(!a||!b||a.length!==b.length)return 0;let dot=a.reduce((s,v,i)=>s+v*b[i],0);return Math.max(0,Math.min(100,Math.round(dot*100)));}
+$('regStart').onclick=()=>start('regVideo','reg');$('regStop').onclick=()=>stop('reg');$('scanStart').onclick=()=>start('scanVideo','scan');$('scanStop').onclick=()=>stop('scan');
+$('regCapture').onclick=()=>{try{regPhoto=snap('regVideo');$('regPreview').src=regPhoto;$('regPreview').style.display='block';$('regStatus').textContent='Muzzle photo captured. Complete the form and save.';}catch(e){$('regStatus').textContent=e.message;}};
+$('regForm').onsubmit=async e=>{e.preventDefault();if(!regPhoto){$('regStatus').textContent='Please capture the muzzle photo before saving.';return;}const id='PV-'+Date.now().toString().slice(-8);const f=await feature(regPhoto);db.unshift({id,owner:$('owner').value.trim(),phone:$('phone').value.trim(),breed:$('breed').value,type:$('type').value,age:$('age').value,vaccine:$('vaccine').value,notes:$('notes').value,photo:regPhoto,feature:f});saveDB();$('regStatus').textContent='Saved successfully. Cattle ID: '+id+'. Scan the same muzzle photo to test matching.';$('regForm').reset();regPhoto='';$('regPreview').style.display='none';};
+$('scanCapture').onclick=async()=>{try{if(!db.length){$('scanStatus').textContent='No cattle registered yet. Register a cattle first.';return;}const photo=snap('scanVideo');$('scanStatus').textContent='Comparing scan with saved photos…';const f=await feature(photo);const ranked=db.map(x=>({x,score:similarity(f,x.feature)})).sort((a,b)=>b.score-a.score);const best=ranked[0];if(!best||best.score<75){$('matchResult').style.display='block';$('matchResult').innerHTML='<h3>⚠️ No confident match</h3><p>No strong visual match found in the saved demo database.</p><p>Try a clearer photo with a similar angle and lighting, or register this cattle first.</p>';$('scanStatus').textContent='Scan completed. Similarity score is only a demo estimate.';return;}const x=best.x;$('matchResult').style.display='block';$('matchResult').innerHTML=`<img src="${x.photo}" alt="Saved muzzle"><h3>✅ Possible match found</h3><p><b>Cattle ID:</b> ${esc(x.id)}</p><p><b>Owner:</b> ${esc(x.owner)}</p><p><b>Breed:</b> ${esc(x.breed)}</p><p><b>Animal:</b> ${esc(x.type)}</p><p><b>Age:</b> ${esc(x.age||'Not added')}</p><p><b>Vaccination:</b> ${esc(x.vaccine||'Not added')}</p><p><b>Phone:</b> ${esc(x.phone||'Not added')}</p><p><b>Notes:</b> ${esc(x.notes||'None')}</p><p><b>Demo similarity:</b> ${best.score}%</p><small>Possible match only — verify manually. This score is not an accuracy or identity guarantee.</small>`;$('scanStatus').textContent='Comparison complete.';}catch(e){$('scanStatus').textContent=e.message;}};
+window.removeRecord=id=>{if(confirm('Delete '+id+'?')){db=db.filter(x=>x.id!==id);saveDB();}};
+render();
+</script></body></html>
